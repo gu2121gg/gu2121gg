@@ -1,0 +1,396 @@
+/* Estilo global */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #000000;
+    margin: 0;
+    padding: 0;
+    color: #ffffff;
+}
+
+/* Container principal */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+/* Cabeçalho */
+.site-header {
+    background-color: #000000;
+    border-bottom: 2px solid #0059ff;
+    padding: 1rem 0;
+    margin-bottom: 1.5rem;
+}
+
+.site-header nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.site-header .logo {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #2563eb;
+    margin-right: 1rem;
+}
+
+.site-header ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.site-header ul li {
+    margin-left: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.site-header ul li a {
+    color: #0067f8;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.site-header ul li a:hover {
+    color: #3b82f6;
+}
+
+/* Banner responsivo */
+.banner {
+    background-size: cover;
+    background-position: center;
+    border-radius: 0.75rem;
+    text-align: center;
+    color: white;
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    min-height: 300px;
+    max-height: 400px;
+    width: 100%;
+    transition: background-image 0.5s ease-in-out;
+}
+
+.banner h2,
+.banner p {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .banner h2,
+    .banner p {
+        display: block;
+    }
+}
+
+.banner h2 {
+    font-size: 1.75rem;
+    font-weight: bold;
+    margin-bottom: 0.75rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.banner p {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Ajuste para telas menores */
+@media (max-width: 768px) {
+    .banner {
+        min-height: 200px;
+        max-height: 250px;
+        padding: 1rem;
+    }
+
+    .banner h2 {
+        font-size: 1.5rem;
+    }
+
+    .banner p {
+        font-size: 0.9rem;
+    }
+
+    .site-header nav {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .site-header ul {
+        margin-top: 1rem;
+        justify-content: center;
+    }
+
+    .site-header ul li {
+        margin-left: 0.5rem;
+        margin-right: 0.5rem;
+    }
+
+    .book-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Seção de livros */
+.section {
+    margin-bottom: 1.5rem;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #2563eb;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.book-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.book-card {
+    background-color: #ffffff;
+    border-radius: 0.75rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.book-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+.book-card h3 {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #1e40af;
+    margin-bottom: 0.5rem;
+}
+
+.book-card p {
+    color: #4b5563;
+    margin-bottom: 0.75rem;
+    font-size: 0.875rem;
+}
+
+.book-card .price {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #22c55e;
+}
+
+/* Botão de entrada */
+.enter-button {
+    background-color: #ffffff;
+    color: #000000;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    text-decoration: none;
+    text-align: center;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.enter-button:hover {
+    background-color: #00ffc8;
+}
+
+/* Rodapé */
+.footer {
+    background-color: #000000;
+    padding: 1rem 0;
+    text-align: center;
+    color: #4b5563;
+    border-top: 1px solid #000000;
+    margin-top: 1.5rem;
+}
+
+.footer p {
+    font-size: 0.75rem;
+    color: #ffffff;
+}
+
+/* Estilo do status de pagamento */
+#payment-status {
+    text-align: center;
+    margin-top: 2rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+#payment-status.pago {
+    background-color: #22c55e;
+    color: #ffffff;
+}
+
+#payment-status.nao-pago {
+    background-color: #ef4444;
+    color: #ffffff;
+}
+
+/* Estilos para o pagamento Pix */
+#pix-payment {
+    text-align: center;
+    margin-top: 2rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background-color: #f0f0f0;
+    color: #111827;
+}
+
+#pix-payment h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: #10b981;
+}
+
+#pix-payment p {
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+#qrcode {
+    margin-bottom: 1rem;
+    display: inline-block;
+    border: 2px solid #10b981;
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+    background-color: #fff;
+}
+
+/* Estilos para os botões de preço */
+.pricing-options {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+.pricing-options button {
+    background-color: #10b981;
+    color: #ffffff;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.375rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border: none;
+    margin: 0 0.5rem;
+}
+
+.pricing-options button:hover {
+    background-color: #059669;
+}
+
+.pricing-options button:disabled {
+    background-color: #6ee7b7;
+    cursor: not-allowed;
+}
+
+#confirm-payment {
+    background-color: #10b981;
+    color: #ffffff;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.375rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border: none;
+    margin-top: 1rem;
+}
+
+#confirm-payment:hover {
+    background-color: #059669;
+}
+
+#confirm-payment:disabled {
+    background-color: #6ee7b7;
+    cursor: not-allowed;
+}
+
+
+/* Estilos para telas muito pequenas (smartphones) */
+@media (max-width: 480px) {
+    .site-header .logo {
+        font-size: 1rem;
+    }
+
+    .site-header ul li {
+        margin-left: 0.25rem;
+        margin-right: 0.25rem;
+    }
+
+    .site-header ul li a {
+        font-size: 0.8rem;
+    }
+
+    .banner {
+        min-height: 150px;
+        max-height: 200px;
+        padding: 0.5rem;
+    }
+
+    .banner h2 {
+        font-size: 1.25rem;
+    }
+
+    .banner p {
+        font-size: 0.75rem;
+    }
+
+    .book-card {
+        padding: 0.75rem;
+    }
+
+    .book-card h3 {
+        font-size: 0.9rem;
+    }
+    .book-card p {
+        font-size: 0.8rem;
+    }
+
+    .book-card .price {
+        font-size: 1rem;
+    }
+
+    .footer p {
+        font-size: 0.7rem;
+    }
+
+    #pix-payment h2{
+        font-size: 1.2rem;
+    }
+    #pix-payment p{
+        font-size: 0.9rem;
+    }
+     .pricing-options button {
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+    }
+    #confirm-payment{
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+    }
+    #qrcode {
+        width: 200px;
+        height: 200px;
+    }
+}

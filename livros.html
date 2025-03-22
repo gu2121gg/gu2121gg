@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizador de Livros em Cards</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-image: url('assets/background.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        #barra-navegacao {
+            background-color: #262f5791;
+            overflow: hidden;
+            padding: 10px;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        #barra-navegacao h1 {
+            color: white;
+            margin: 0 0 10px 0;
+            font-size: 20px;
+        }
+
+        #categorias-navegacao {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        #categorias-navegacao button {
+            background-color: #f0f0f0;
+            color: #333;
+            border: none;
+            padding: 8px 15px;
+            margin: 0 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+        #categorias-navegacao button:hover {
+            background-color: #ddd;
+        }
+
+        #lista-livros {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            padding: 15px;
+            justify-content: center;
+        }
+
+        .card-livro {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #6d6d6d27;
+            border: 1px solid #00ffdd;
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgb(255, 0, 0);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+            height: auto;
+            overflow: hidden;
+        }
+
+        .card-livro:hover {
+            transform: scale(1.05);
+        }
+
+        .card-livro img {
+            width: 100%;
+            height: auto;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .card-livro h2 {
+            font-size: 16px;
+            margin: 10px 0 0 0;
+            color: #333;
+            position: relative;
+            z-index: 1;
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+
+        #mensagem-inicial {
+            text-align: center;
+            font-size: 18px;
+            color: #555;
+            margin-top: 20px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 10px;
+            font-size: 16px;
+            color: #555;
+        }
+
+        #usuario-logado {
+            color: white;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+
+        /* Estilos para dispositivos móveis */
+        @media (max-width: 768px) {
+            #lista-livros {
+                grid-template-columns: 1fr;
+            }
+            .card-livro {
+                height: auto; /* Removido o height fixo */
+            }
+            .card-livro img {
+                max-height: 400px;
+            }
+            #barra-navegacao {
+                flex-direction: column;
+                align-items: center;
+            }
+            #barra-navegacao h1 {
+                margin-bottom: 10px;
+            }
+            #categorias-navegacao {
+                flex-direction: row;
+                justify-content: center;
+                margin-bottom: 10px;
+                width: 100%;
+            }
+            #categorias-navegacao button {
+                margin: 5px;
+            }
+        }
+
+        /* Estilos para o banner rotativo */
+        #banner-container {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            margin: 20px 0;
+        }
+
+        #banner-slides {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+            width: 300%;
+        }
+
+        .banner-slide {
+            min-width: 33.33%;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .banner-slide img {
+            border-radius: 10px;
+            max-width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+        }
+
+        @media (max-width: 768px) {
+            .banner-slide img {
+                max-height: 200px;
+            }
+        }
+
+        .banner-navigation {
+            display: none; /* Removi a exibição dos botões de navegação */
+        }
+
+        .banner-nav-button {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #ddd;
+            margin: 0 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .banner-nav-button.active {
+            background-color: #ff0000;
+        }
+
+        .payment-status {
+            text-align: center;
+            margin-top: 2rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-weight: bold;
+            font-size: 1rem;
+            display: none;
+        }
+
+        .payment-status.pago {
+            background-color: #22c55e;
+            color: #ffffff;
+        }
+
+        .payment-status.nao-pago {
+            background-color: #ef4444;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <div id="barra-navegacao">
+        <h1>Livros</h1>
+        <div id="categorias-navegacao">
+            <button data-categoria="romance">Romance</button>
+            <button data-categoria="acao">Ação</button>
+            <button data-categoria="ficção">Comédia</button>
+        </div>
+        <div id="usuario-logado"></div>
+    </div>
+
+    <div id="banner-container">
+        <div id="banner-slides">
+            <div class="banner-slide">
+                <img src="assets/BANNER.png" alt="Banner 1">
+            </div>
+            <div class="banner-slide">
+                <img src="assets/BANNER2.png" alt="Banner 2">
+            </div>
+            <div class="banner-slide">
+                <img src="assets/BANNER3.gif" alt="Banner 3">
+            </div>
+        </div>
+        <div class="banner-navigation">
+            <div class="banner-nav-button active"></div>
+            <div class="banner-nav-button"></div>
+            <div class="banner-nav-button"></div>
+        </div>
+    </div>
+
+    <div id="lista-livros">
+    </div>
+
+    <p id="mensagem-inicial">Carregando livros...</p>
+    <div class="loading" id="loading">Carregando mais livros...</div>
+    <div id="payment-status" class="payment-status"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDOqjTZ2edf2puBFkZrJm1DN-vc5iOqvAo",
+            authDomain: "livros-9cd3a.firebaseapp.com",
+            databaseURL: "https://livros-9cd3a-default-rtdb.firebaseio.com",
+            projectId: "livros-9cd3a",
+            storageBucket: "livros-9cd3a.firebasestorage.app",
+            messagingSenderId: "425870272898",
+            appId: "1:425870272898:web:4031f4c6511c4dcd49079b"
+        };
+
+        // Inicializar o Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const rtdb = firebase.database();
+
+        const listaLivros = document.getElementById('lista-livros');
+        const mensagemInicial = document.getElementById('mensagem-inicial');
+        const loadingIndicator = document.getElementById('loading');
+        const usuarioLogadoElement = document.getElementById('usuario-logado');
+        const categoriasNavegacao = document.getElementById('categorias-navegacao');
+        const paymentStatusElement = document.getElementById('payment-status');
+
+        let livrosCarregados = 0;
+        const totalLivros = 100;
+        const livrosPorCarregamento = 20;
+        let carregando = false;
+        let observer;
+        let categoriaSelecionada = null;
+
+        const barraNavegacao = document.getElementById('barra-navegacao');
+
+        // Dados dos livros (capas, títulos e links)
+        const dadosLivros = [
+            {'capa': 'capas/livro1.jpg', 'titulo': 'Livro 1', 'link': 'livro1.html', 'categoria': 'romance'},
+            {'capa': 'capas/livro2.jpg', 'titulo': 'Livro 2', 'link': 'livro2.html', 'categoria': 'acao'},
+            {'capa': 'capas/ficção/GUERRA-E-PAZ.png', 'titulo': 'GUERRA E PAZ', 'link': 'livro3.html', 'categoria': 'ficção'},
+            {'capa': 'capas/livro4.jpg', 'titulo': 'Livro 4', 'link': 'livro4.html', 'categoria': 'romance'},
+            {'capa': 'capas/livro5.jpg', 'titulo': 'Livro 5', 'link': 'livro5.html', 'categoria': 'acao'},
+            {'capa': 'capas/livro6.jpg', 'titulo': 'Livro 6', 'link': 'livro6.html', 'categoria': 'ficção'},
+            {'capa': 'capas/livro7.jpg', 'titulo': 'Livro 7', 'link': 'livro7.html', 'categoria': 'romance'},
+            {'capa': 'capas/livro8.jpg', 'titulo': 'Livro 8', 'link': 'livro8.html', 'categoria': 'acao'},
+            {'capa': 'capas/livro9.jpg', 'titulo': 'Livro 9', 'link': 'livro9.html', 'categoria': 'ficção'},
+            {'capa': 'capas/livro10.jpg', 'titulo': 'Livro 10', 'link': 'livro10.html', 'categoria': 'romance'},
+            {'capa': 'capas/livro11.jpg', 'titulo': 'Livro 11', 'link': 'livro11.html', 'categoria': 'acao'},
+            {'capa': 'capas/livro12.jpg', 'titulo': 'Livro 12', 'link': 'livro12.html', 'categoria': 'ficção'},
+            {'capa': 'capas/livro13.jpg', 'titulo': 'Livro 13', 'link': 'livro13.html', 'categoria': 'romance'},
+            {'capa': 'capas/livro14.jpg', 'titulo': 'Livro 14', 'link': 'livro14.html', 'categoria': 'acao'},
+            {'capa': 'capas/livro15.jpg', 'titulo': 'Livro 15', 'link': 'livro15.html', 'categoria': 'ficção'},
+            {'capa': 'capas/livro16.jpg', 'titulo': 'Livro 16', 'link': 'livro16.html', 'categoria': 'romance'},
+            {'capa': 'capas/livro17.jpg', 'titulo': 'Livro 17', 'link': 'livro17.html', 'categoria': 'acao'},
+            {'capa': 'capas/livro18.jpg', 'titulo': 'Livro 18', 'link': 'livro18.html', 'categoria': 'ficção'},
+            {'capa': 'capas/livro19.jpg', 'titulo': 'Livro 19', 'link': 'livro19.html', 'categoria': 'romance'},
+            {'capa': 'capas/livro20.jpg', 'titulo': 'Livro 20', 'link': 'livro20.html', 'categoria': 'acao'},
+            {'capa': 'capas/livro21.jpg', 'titulo': 'Livro 21', 'link': 'livro21.html', 'categoria': 'ficção'},
+            {'capa': 'capas/livro22.jpg', 'titulo': 'Livro 22', 'link': 'livro22.html', 'categoria': 'romance'},
+            {'capa': 'capas/livro23.jpg', 'titulo': 'Livro 23', 'link': 'livro23.html', 'categoria': 'acao'},
+            {'capa': 'capas/livro24.jpg', 'titulo': 'Livro 24', 'link': 'livro24.html', 'categoria': 'ficção'},
+            {'capa': 'capas/livro25.jpg', 'titulo': 'Livro 25', 'link': 'livro25.html', 'categoria': 'romance'},
+            {'capa': 'capas/livro26.jpg', 'titulo': 'Livro 26', 'link': 'livro26.html', 'categoria': 'acao'},
+            {'capa': 'capas/livro27.jpg', 'titulo': 'Livro 27', 'link': 'livro27.html', 'categoria': 'ficção'},
+            {'capa': 'capas/livro28.jpg', 'titulo': 'Livro 28', 'link': 'livro28.html', 'categoria': 'romance'},
+            {'capa': 'capas/livro29.jpg', 'titulo': 'Livro 29', 'link': 'livro29.html', 'categoria': 'acao'},
+            {'capa': 'capas/livro30.jpg', 'titulo': 'Livro 30', 'link': 'livro30.html', 'categoria': 'ficção'},
+        ];
+
+        function criarCardLivro(livro) {
+            const cardLivro = document.createElement('div');
+            cardLivro.className = 'card-livro';
+
+            const imgCapa = document.createElement('img');
+            imgCapa.src = livro.capa;
+            imgCapa.alt = `Capa do livro ${livro.titulo}`;
+            imgCapa.setAttribute('data-livro-id', livro.id);
+            cardLivro.appendChild(imgCapa);
+
+            const tituloLivro = document.createElement('h2');
+            tituloLivro.textContent = livro.titulo;
+            cardLivro.appendChild(tituloLivro);
+
+            cardLivro.addEventListener('click', () => {
+                window.location.href = livro.link;
+            });
+
+            return cardLivro;
+        }
+
+        function carregarLivros(categoria = null) {
+            if (carregando) return;
+            carregando = true;
+            loadingIndicator.style.display = 'block';
+
+            setTimeout(() => {
+                const novosLivros = [];
+                const livrosParaCarregar = Math.min(livrosPorCarregamento, totalLivros - livrosCarregados);
+
+                for (let i = 0; i < livrosParaCarregar; i++) {
+                    const livroIndex = livrosCarregados + i;
+                    if (dadosLivros[livroIndex]) {
+                        if (categoria === null || dadosLivros[livroIndex].categoria === categoria) {
+                            novosLivros.push({
+                                id: livroIndex + 1,
+                                capa: dadosLivros[livroIndex].capa,
+                                titulo: dadosLivros[livroIndex].titulo,
+                                link: dadosLivros[livroIndex].link,
+                            });
+                        }
+                    }
+                }
+
+                novosLivros.forEach(livro => {
+                    const cardLivro = criarCardLivro(livro);
+                    listaLivros.appendChild(cardLivro);
+                    livrosCarregados += 1;
+                });
+
+                carregando = false;
+                loadingIndicator.style.display = 'none';
+
+                if (livrosCarregados === totalLivros || (categoria !== null && listaLivros.children.length === 0)) {
+                    mensagemInicial.textContent = categoria !== null ? `Nenhum livro encontrado para a categoria "${categoria}".` : 'Todos os livros foram carregados.';
+                    loadingIndicator.style.display = 'none';
+                }
+            }, 1000);
+        }
+
+        function exibirLivros() {
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    usuarioLogadoElement.textContent = `Logado como: ${user.email}`;
+                    checkUserPaymentStatus(user);
+                } else {
+                    window.location.href = 'index.html';
+                }
+            });
+        }
+
+        function checkUserPaymentStatus(user) {
+            console.log('Função checkUserPaymentStatus chamada para o usuário:', user.uid);
+            db.collection('users').doc(user.uid).get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        const userData = doc.data();
+                        console.log('Dados do usuário encontrados:', userData);
+                        if (userData.pago && userData.expirationDate && userData.expirationDate.toDate() > new Date()) {
+                            console.log('Usuário pago e assinatura válida.');
+                            barraNavegacao.style.display = 'flex';
+                            listaLivros.style.display = 'grid';
+                            mensagemInicial.style.display = 'block';
+                            loadingIndicator.style.display = 'none';
+                            carregarLivros(categoriaSelecionada);
+                        } else {
+                            console.log('Usuário não pago ou assinatura expirada.');
+                            paymentStatusElement.textContent = 'Você precisa ser um usuário pago para acessar todo o conteúdo.';
+                            paymentStatusElement.className = 'payment-status nao-pago';
+                            paymentStatusElement.style.display = 'block';
+                            barraNavegacao.style.display = 'none';
+                            listaLivros.style.display = 'none';
+                            mensagemInicial.style.display = 'none';
+                            loadingIndicator.style.display = 'none';
+                        }
+                    } else {
+                        console.error('Documento do usuário não encontrado');
+                        paymentStatusElement.textContent = 'Erro ao verificar o status de pagamento.';
+                        paymentStatusElement.className = 'payment-status nao-pago';
+                        paymentStatusElement.style.display = 'block';
+                        barraNavegacao.style.display = 'none';
+                        listaLivros.style.display = 'none';
+                        mensagemInicial.style.display = 'none';
+                        loadingIndicator.style.display = 'none';
+                    }
+                })
+                .catch((error) => {
+                    console.error('Erro ao buscar dados do usuário:', error);
+                    paymentStatusElement.textContent = 'Erro ao verificar o status de pagamento.';
+                    paymentStatusElement.className = 'payment-status nao-pago';
+                    paymentStatusElement.style.display = 'block';
+                    barraNavegacao.style.display = 'none';
+                    listaLivros.style.display = 'none';
+                    mensagemInicial.style.display = 'none';
+                    loadingIndicator.style.display = 'none';
+                });
+        }
+
+        observer = new MutationObserver(() => {
+            if (livrosCarregados < totalLivros) {
+                carregarLivros(categoriaSelecionada);
+            }
+        });
+
+        observer.observe(listaLivros, { childList: true });
+
+        // Banner Rotativo
+        const bannerSlides = document.getElementById('banner-slides');
+        const bannerNavButtons = document.querySelectorAll('.banner-nav-button');
+        let currentSlide = 0;
+        let intervalId;
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % bannerNavButtons.length;
+            updateBanner();
+        }
+
+        function updateBanner() {
+            bannerSlides.style.transform = `translateX(${-currentSlide * (100 / bannerNavButtons.length)}%)`;
+            bannerNavButtons.forEach((button, index) => {
+                button.classList.toggle('active', index === currentSlide);
+            });
+        }
+
+        function startBannerRotation() {
+            intervalId = setInterval(nextSlide, 5000);
+        }
+
+        function stopBannerRotation() {
+            clearInterval(intervalId);
+        }
+
+        startBannerRotation();
+
+
+        const bannerContainer = document.getElementById('banner-container');
+        bannerContainer.addEventListener('mouseenter', stopBannerRotation);
+        bannerContainer.addEventListener('mouseleave', startBannerRotation);
+
+        categoriasNavegacao.addEventListener('click', (event) => {
+            if (event.target.tagName === 'BUTTON') {
+                categoriaSelecionada = event.target.dataset.categoria;
+                livrosCarregados = 0;
+                listaLivros.innerHTML = '';
+                mensagemInicial.textContent = `Carregando livros de ${categoriaSelecionada}...`;
+                carregarLivros(categoriaSelecionada);
+            }
+        });
+
+        exibirLivros();
+    </script>
+</body>
+</html>

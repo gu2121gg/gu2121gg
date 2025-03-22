@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leitor de PDF Simples</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            background-color: #121212; /* Cor de fundo escura */
+            background-image: url('assets/background.png'); /* Imagem do papel de parede */
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            animation: backgroundAnimation 10s infinite alternate; /* Animação de fundo (movimento para cima e para baixo) */
+        }
+
+        #pdf-container {
+            width: 95%;
+            max-width: 1200px;
+            height: 90vh;
+            background-color: rgba(18, 18, 18, 0.9); /* Fundo escuro e semitransparente */
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            position: relative;
+            animation: containerFadeIn 1.5s ease-in-out;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            transition: transform 0.3s ease-in-out; /* Transição suave */
+        }
+
+        iframe:hover {
+            transform: scale(1.02); /* Efeito de zoom suave */
+        }
+
+        /* Animação do fundo (subindo e descendo) */
+        @keyframes backgroundAnimation {
+            0% {
+                background-position: 0 0;
+            }
+            100% {
+                background-position: 0 100%;
+            }
+        }
+
+        /* Animação de entrada do contêiner */
+        @keyframes containerFadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        /* Estilos responsivos */
+        @media (max-width: 768px) {
+            body {
+                background-attachment: scroll; /* Remove o fundo fixo em dispositivos móveis para melhorar o desempenho */
+            }
+
+            #pdf-container {
+                height: 80vh; /* Ajuste para telas menores */
+            }
+
+            iframe {
+                height: 100%; /* Ajuste da altura para o conteúdo ser bem visível */
+            }
+        }
+
+        /* Estilos para telas pequenas */
+        @media (max-width: 480px) {
+            #pdf-container {
+                height: 75vh; /* Ajuste para telas muito pequenas */
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div id="pdf-container">
+        <iframe src="livros/ficção/Guerra-e-Paz-autor.pdf" frameborder="0"></iframe>
+    </div>
+</body>
+</html>
